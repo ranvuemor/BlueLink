@@ -1,7 +1,7 @@
+from bluelink.bluez import BlueZMonitor
 from bluelink.config import Config
 from bluelink.logger import get_logger
 from bluelink.notifier import Notifier
-from bluelink.bluez import BlueZMonitor
 
 
 def main():

@@ -1,6 +1,6 @@
+import logging
 import subprocess
 import time
-import logging
 
 import dbus
 import dbus.mainloop.glib
@@ -33,6 +33,7 @@ class BlueZMonitor:
             ["bluetoothctl", "connect", self.config.device_mac],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            check=False,
         )
 
         if result.returncode == 0:

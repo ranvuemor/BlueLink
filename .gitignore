@@ -1,11 +1,28 @@
+# Virtual environment
+.venv/
+
+# Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-.venv/
-venv/
-dist/
+
+# Distribution
 build/
+dist/
+*.egg-info/
+
+# Test cache
 .pytest_cache/
-.mypy_cache/
-.idea/
+
+# Ruff cache
+.ruff_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# IDE
 .vscode/
+.idea/
+
+# OS
+.DS_Store
