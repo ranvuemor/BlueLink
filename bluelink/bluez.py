@@ -24,13 +24,28 @@ class BlueZMonitor:
         self.last_attempt = 0.0
 
     def connect(self) -> None:
-        self.logger.info("Attempting connection to %s", self.config.device_mac)
+        self.logger.info(
+            "Attempting connection to %s",
+            self.config.device_mac,
+        )
 
-        subprocess.run(
+        result = subprocess.run(
             ["bluetoothctl", "connect", self.config.device_mac],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+
+        if result.returncode == 0:
+            self.logger.info(
+                "Connection command completed for %s",
+                self.config.device_mac,
+            )
+        else:
+            self.logger.warning(
+                "Connection command failed for %s (exit code %d)",
+                self.config.device_mac,
+                result.returncode,
+            )
 
     def delayed_connect(self):
         now = time.monotonic()
@@ -53,7 +68,14 @@ class BlueZMonitor:
 
         if any(key in changed for key in ("RSSI", "Connected")):
             if changed.get("Connected", False):
-                self.logger.info("Device connected")
+                self.logger.info("Connected successfully")
+
+                if self.config.notifications:
+                    self.notifier.notify(
+                        "🎧 AirPods Connected",
+                        "Amish's AirPods Pro is now connected.",
+                    )
+
                 return
 
             GLib.timeout_add(
