@@ -16,8 +16,8 @@ class Notifier:
 
     def notify(self, title: str, body: str) -> None:
         self.interface.Notify(
-            "BlueLink",      # app name
-            0,               # replaces id
+            "BlueLink",  # app name
+            0,  # replaces id
             "audio-headphones",
             title,
             body,

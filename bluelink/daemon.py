@@ -5,7 +5,6 @@ from bluelink.bluez import BlueZMonitor
 
 
 def main():
-
     config = Config(
         device_mac="98:A5:F9:25:83:9B",
     )
