@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bluelink"
+version = "0.1.0"
+description = "Event-driven Bluetooth auto-connect daemon for Linux"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "Amish Kushwaha" }
+]
+dependencies = [
+    "dbus-python",
+    "PyGObject",
+]
+
+[project.scripts]
+bluelink = "bluelink.daemon:main"
