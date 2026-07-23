@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,8 +15,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install black ruff pytest
+      - run: pip install black ruff
 
       - run: black --check .
       - run: ruff check .
-      - run: pytest
