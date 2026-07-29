@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import logging
 import subprocess
+import time
 from collections.abc import Callable
 from typing import Protocol
 
 CommandRunner = Callable[..., subprocess.CompletedProcess[str]]
+Sleeper = Callable[[float], None]
 
 
 class NotificationSender(Protocol):
@@ -29,25 +31,36 @@ class AudioManager:
         logger: logging.Logger,
         notifier: NotificationSender,
         command_runner: CommandRunner | None = None,
+        retry_count: int = 10,
+        retry_delay: float = 0.5,
+        sleeper: Sleeper | None = None,
     ) -> None:
+        if retry_count < 1:
+            raise ValueError("retry_count must be at least 1")
+        if retry_delay < 0:
+            raise ValueError("retry_delay cannot be negative")
+
         self._logger = logger
         self._notifier = notifier
         self._command_runner = command_runner or subprocess.run
+        self._retry_count = retry_count
+        self._retry_delay = retry_delay
+        self._sleeper = sleeper or time.sleep
 
-    def switch_to_bluetooth_sink(self, device_mac: str) -> bool:
+    def switch_to_device(self, device_mac: str) -> bool:
         """Make *device_mac*'s sink default and move active streams to it."""
         try:
-            return self._switch_to_bluetooth_sink(device_mac)
+            return self._switch_to_device(device_mac)
         except Exception:
             self._logger.exception("Unexpected error while switching Bluetooth audio")
             self._notify_failure("An unexpected error occurred while switching audio.")
             return False
 
-    def _switch_to_bluetooth_sink(self, device_mac: str) -> bool:
+    def _switch_to_device(self, device_mac: str) -> bool:
         """Perform the audio switch after the public failure boundary."""
         self._logger.info("Switching audio to Bluetooth device %s", device_mac)
 
-        sink = self._discover_bluetooth_sink(device_mac)
+        sink = self._wait_for_sink(device_mac)
         if sink is None:
             self._notify_failure("Bluetooth audio output is not available yet.")
             return False
@@ -66,6 +79,29 @@ class AudioManager:
             "Audio is now playing through your Bluetooth device.",
         )
         return True
+
+    def _wait_for_sink(self, mac: str) -> str | None:
+        """Wait for PipeWire or PulseAudio to expose the Bluetooth sink."""
+        self._logger.info("Waiting for Bluetooth audio sink for %s", mac)
+
+        for attempt in range(1, self._retry_count + 1):
+            sink = self._discover_bluetooth_sink(mac)
+            if sink is not None:
+                self._logger.info("Sink discovered after %d attempt(s)", attempt)
+                return sink
+
+            if attempt < self._retry_count:
+                self._logger.info(
+                    "Bluetooth audio sink not ready; retrying in %.1f seconds",
+                    self._retry_delay,
+                )
+                self._sleeper(self._retry_delay)
+
+        self._logger.warning(
+            "Sink not found after %d attempt(s)",
+            self._retry_count,
+        )
+        return None
 
     def _discover_bluetooth_sink(self, device_mac: str) -> str | None:
         """Return the PulseAudio sink name belonging to *device_mac*, if any."""
@@ -88,7 +124,6 @@ class AudioManager:
                 self._logger.info("Found Bluetooth audio sink %s", sink)
                 return sink
 
-        self._logger.warning("No Bluetooth audio sink found for %s", device_mac)
         return None
 
     def _set_default_sink(self, sink: str) -> bool:
