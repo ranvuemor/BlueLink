@@ -10,7 +10,7 @@ It listens to BlueZ events over D-Bus and automatically reconnects trusted Bluet
 - Event-driven (no polling)
 - Desktop notifications
 - Journald logging
-- Automatic audio switching (planned)
+- Automatic audio switching after a successful Bluetooth connection
 - AirPods battery support (planned)
 - Works with BlueZ and PipeWire
 
@@ -21,6 +21,6 @@ It listens to BlueZ events over D-Bus and automatically reconnects trusted Bluet
 - [ ] Journald logging
 - [ ] D-Bus Connect()
 - [ ] Config file
-- [ ] Audio switching
+- [x] Audio switching
 - [ ] Battery support
 - [ ] GTK4 frontend

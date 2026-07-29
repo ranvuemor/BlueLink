@@ -1,3 +1,4 @@
+from bluelink.audio import AudioManager
 from bluelink.bluez import BlueZMonitor
 from bluelink.config import Config
 from bluelink.logger import get_logger
@@ -12,11 +13,16 @@ def main():
     logger = get_logger()
 
     notifier = Notifier()
+    audio_manager = AudioManager(
+        logger=logger,
+        notifier=notifier,
+    )
 
     monitor = BlueZMonitor(
         config=config,
         logger=logger,
         notifier=notifier,
+        audio_manager=audio_manager,
     )
 
     monitor.run()

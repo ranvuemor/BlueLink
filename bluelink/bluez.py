@@ -6,6 +6,7 @@ import dbus
 import dbus.mainloop.glib
 from gi.repository import GLib
 
+from .audio import AudioManager
 from .config import Config
 from .notifier import Notifier
 
@@ -16,10 +17,12 @@ class BlueZMonitor:
         config: Config,
         logger: logging.Logger,
         notifier: Notifier,
+        audio_manager: AudioManager,
     ):
         self.config = config
         self.logger = logger
         self.notifier = notifier
+        self.audio_manager = audio_manager
 
         self.last_attempt = 0.0
 
@@ -70,6 +73,8 @@ class BlueZMonitor:
         if any(key in changed for key in ("RSSI", "Connected")):
             if changed.get("Connected", False):
                 self.logger.info("Connected successfully")
+
+                self.audio_manager.switch_to_bluetooth_sink(self.config.device_mac)
 
                 if self.config.notifications:
                     self.notifier.notify(
