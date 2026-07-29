@@ -74,7 +74,7 @@ class BlueZMonitor:
             if changed.get("Connected", False):
                 self.logger.info("Connected successfully")
 
-                self.audio_manager.switch_to_bluetooth_sink(self.config.device_mac)
+                self.audio_manager.switch_to_device(self.config.device_mac)
 
                 if self.config.notifications:
                     self.notifier.notify(

@@ -16,6 +16,8 @@ def main():
     audio_manager = AudioManager(
         logger=logger,
         notifier=notifier,
+        retry_count=config.audio_retry_count,
+        retry_delay=config.audio_retry_delay,
     )
 
     monitor = BlueZMonitor(
