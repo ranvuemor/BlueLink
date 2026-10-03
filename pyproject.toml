@@ -19,3 +19,4 @@ dependencies = [
 
 [project.scripts]
 bluelink = "bluelink.daemon:main"
+bluelink-gui = "bluelink.gui:main"

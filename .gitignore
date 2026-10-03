@@ -1,14 +1,32 @@
 # Virtual environment
 .venv/
+venv/
+env/
+ENV/
 
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
+.Python
+.mypy_cache/
+.pyre/
+.pytype/
+.hypothesis/
+.tox/
+.nox/
+
+# Packaging and installers
+*.whl
+pip-wheel-metadata/
+share/python-wheels/
 
 # Distribution
 build/
 dist/
 *.egg-info/
+*.egg
+site/
 
 # Test cache
 .pytest_cache/
@@ -18,11 +36,29 @@ dist/
 
 # Coverage
 .coverage
+.coverage.*
 htmlcov/
+coverage.xml
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Local configuration and runtime state
+.env
+.env.*
+!.env.example
+*.log
+logs/
+var/
+
+# Codex local workspace state
+.codex/
+.agents/
 
 # OS
 .DS_Store
+Thumbs.db
